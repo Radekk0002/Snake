@@ -496,23 +496,19 @@ Game.prototype.startGame = function () {
             // _.remSnakePosFromFields(_.snake.bodyPartsHolder)
             _.setFields(_.snake.bodyPartsHolder)
             
-            
-            if(_.totalPoints >= 150 && Math.random()*100 <= 20){
-                _.rottenApple.randomize(_.fields)
-            }
-            else if (_.totalPoints >= 200 && Math.random() * 100 <= 20){
-                _.goodApple.randomize(_.fields)
-            }
-            else if (_.totalPoints >= 375 && Math.random() * 100 <= 15){
-                _.betterApple.randomize(_.fields)
-            }
-            else if (_.totalPoints >= 575 && Math.random() * 100 <= 10){
-                _.godApple.randomize(_.fields)
-            }
-            else{
-                _.apple.randomize(_.fields)
-            }
+            let num = 0
 
+            if (_.totalPoints >= 150) num = Math.random() * 100
+
+            if(_.totalPoints <=150 || num < 60) _.apple.randomize(_.fields)
+
+            else if(_.totalPoints >= 150 && num < 75) _.rottenApple.randomize(_.fields)
+                
+            else if (_.totalPoints >= 200 && num < 85) _.goodApple.randomize(_.fields)
+                
+            else if (_.totalPoints >= 375 && num < 95) _.betterApple.randomize(_.fields)
+                
+            else if (_.totalPoints >= 575 && num * 100 < 100) _.godApple.randomize(_.fields)
 
             cancelAnimationFrame(_.drawID)
             
