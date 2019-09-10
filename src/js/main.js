@@ -70,9 +70,9 @@ Apple.prototype.drawApples = function(){
         const x = _.apples[i].x
         const y = _.apples[i].y
 
-        _.img = _.apples[i].img
+        const imgT = _.apples[i].img
         
-        _.ctx.drawImage(_.img, _.snakeSize * x, _.snakeSize * y, _.appleSize+8, _.appleSize+8)
+        _.ctx.drawImage(imgT, _.snakeSize * x, _.snakeSize * y, _.appleSize+8, _.appleSize+8)
         
     }
 }
@@ -509,6 +509,8 @@ Game.prototype.startGame = function () {
             else if (_.totalPoints >= 375 && num < 95) _.betterApple.randomize(_.fields)
                 
             else if (_.totalPoints >= 575 && num * 100 < 100) _.godApple.randomize(_.fields)
+
+            else _.apple.randomize(_.fields)
 
             cancelAnimationFrame(_.drawID)
             
