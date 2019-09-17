@@ -23,14 +23,18 @@ const config = {
             './src/js/**/*.js',
         ],
         sass: './src/style/**/*.sass',
-        html: './src/*.html'
+        html: './src/*.html',
+        media: './src/media/**'
     },
     dist: {
-        base: './dist/',
+        baseJS: './dist/js',
+        base: './dist',
+        baseCSS: './dist/css',
+        media: './dist/media'
     },
     extraBundles: [
-        './dist/main.js',
-        './dist/main.css'
+        './dist/js/main.js',
+        './dist/css/main.css'
     ]
 }
 
@@ -46,9 +50,9 @@ function cssTask(done){
         .pipe(autoPrefixer('last 2 versions'))
         .pipe(cssComb())
         .pipe(cmq({log: true}))
-        .pipe(rename({suffix: ".bundle"}))
+        .pipe(rename({suffix: ".min"}))
         .pipe(cleanCss())
-        .pipe(dest(config.dist.base))
+        .pipe(dest(config.dist.baseCSS))
 
     done();
 }
@@ -69,9 +73,9 @@ function jsTask(done) {
         ]
             
         }))
-        .pipe(rename({suffix: ".bundle"}))
+        .pipe(rename({suffix: ".min"}))
         .pipe(uglify())
-        .pipe(dest(config.dist.base))
+        .pipe(dest(config.dist.baseJS))
 
     done()
 }
@@ -90,6 +94,19 @@ function templateTask(done) {
     done()
 }
 
+function mediaTask(done){
+    src(config.app.media) 
+        .pipe(plumber({
+            handleError: function(err) {
+                console.log(err)
+                this.emit("end")
+            }
+        }))
+        .pipe(dest(config.dist.media))
+
+    done()
+}
+
 function watchTask() {
     watch(config.app.sass).on('change', series(cssTask, reloads));
     // watch(config.app.sass, series(cssTask, reload));
@@ -97,6 +114,7 @@ function watchTask() {
     // watch(config.app.js, series(jsTask, reload));
     watch(config.app.html).on("change", series(templateTask, reloads));
     // watch(config.app.html, series(templateTask, reload));
+    watch(config.app.media).on("change", series(mediaTask, reloads));
 }
 
 function liveReload(done){
@@ -120,5 +138,5 @@ function cleanUp() {
 }
 
 
-exports.dev = parallel(cssTask, jsTask, templateTask, watchTask, liveReload);
-exports.build = series(cleanUp, parallel(cssTask, jsTask, templateTask))
+exports.dev = parallel(cssTask, jsTask, templateTask, mediaTask, watchTask, liveReload);
+exports.build = series(cleanUp, parallel(cssTask, jsTask, templateTask, mediaTask))
